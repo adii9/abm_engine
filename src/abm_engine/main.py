@@ -39,12 +39,21 @@ class ABMEngineFlow(Flow[ABMState]):
             }
         )
         
-        # Determine ICP fit
-        self.state.icp_fit = result.pydantic.icp_fit
+        # Determine ICP fit securely
+        if result.pydantic:
+            self.state.icp_fit = result.pydantic.icp_fit
+            reason = getattr(result.pydantic, 'reason', "No reason provided")
+        elif result.json_dict:
+            self.state.icp_fit = result.json_dict.get('icp_fit', False)
+            reason = result.json_dict.get('reason', "No reason provided")
+        else:
+            self.state.icp_fit = "true" in result.raw.lower()
+            reason = result.raw
+
         if not self.state.icp_fit:
-            self.state.rejection_reason = result.pydantic.reason
+            self.state.rejection_reason = reason
             
-        return result.pydantic
+        return result.pydantic or result.json_dict or result.raw
 
     @router(qualify_account)
     def check_qualification(self):
@@ -53,7 +62,7 @@ class ABMEngineFlow(Flow[ABMState]):
             return "research_phase"
         else:
             print(f"Failed ICP Fit: {self.state.rejection_reason}. Ending flow.")
-            return "end_flow"
+            return "reject_account"
 
     @listen("research_phase")
     def research_account(self):
@@ -74,23 +83,33 @@ class ABMEngineFlow(Flow[ABMState]):
         }
         result = ContentCrew().crew().kickoff(inputs=inputs)
         
-        self.state.final_content = {
-            "engagement_plan": result.pydantic.engagement_plan,
-            "value_gift": result.pydantic.value_gift,
-            "outreach_email": result.pydantic.outreach_email
-        }
+        if result.pydantic:
+            self.state.final_content = {
+                "engagement_plan": getattr(result.pydantic, 'engagement_plan', ''),
+                "value_gift": getattr(result.pydantic, 'value_gift', ''),
+                "outreach_email": getattr(result.pydantic, 'outreach_email', '')
+            }
+        elif result.json_dict:
+            self.state.final_content = result.json_dict
+        else:
+            import json
+            try:
+                cleaned = result.raw.replace('```json', '').replace('```', '').strip()
+                self.state.final_content = json.loads(cleaned)
+            except Exception:
+                self.state.final_content = {"raw_output": result.raw}
         print("ABM Flow Complete!")
         return self.state.final_content
 
-    @listen("end_flow")
-    def end_flow(self):
+    @listen("reject_account")
+    def handle_rejection(self):
         print("Flow ended due to failed qualification.")
         return {"status": "rejected", "reason": self.state.rejection_reason}
 
 
 def kickoff():
     abm_flow = ABMEngineFlow()
-    abm_flow.state.company_name = "Acme Corp" # Default test input, would normally be passed in
+    abm_flow.state.company_name = "AWE FUNDS" # Default test input, would normally be passed in
     result = abm_flow.kickoff()
     print("Final State:", abm_flow.state.model_dump())
 

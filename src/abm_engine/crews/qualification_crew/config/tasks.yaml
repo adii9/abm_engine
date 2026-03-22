@@ -2,6 +2,8 @@ account_selection_task:
   description: >
     Evaluate the company {company_name} against our strict Ideal Customer Profile (ICP) criteria. 
     
+    You MUST actively search for information about {company_name} using your tools before making a decision. Specifically, prioritize searching LinkedIn and Tracxn.com (e.g., query "{company_name} Tracxn" or "{company_name} LinkedIn company page") to gather firmographic data, employee counts, and recent funding rounds to validate against the ICP.
+    
     ICP Criteria:
     {icp_criteria}
     

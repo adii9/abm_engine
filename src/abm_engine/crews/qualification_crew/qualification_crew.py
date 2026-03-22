@@ -1,5 +1,6 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 from pydantic import BaseModel
 
 class QualificationResult(BaseModel):
@@ -14,6 +15,7 @@ class QualificationCrew():
     def account_scout(self) -> Agent:
         return Agent(
             config=self.agents_config['account_scout'],
+            tools=[SerperDevTool(), ScrapeWebsiteTool()],
             verbose=True
         )
 

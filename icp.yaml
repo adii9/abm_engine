@@ -2,17 +2,26 @@
 # The Qualification Crew will read this file and use it to determine if an account is a fit.
 
 target_industries:
-  - B2B Software as a Service (SaaS)
-  - Technology Consulting
+  - Venture Capital (VC)
+  - Private Equity (PE)
+  - Angel Networks & Syndicates
+  - Startup Accelerators and Incubators
+  - Family Offices (Direct Investment Arms)
 
 company_size:
-  - 50 to 500 employees
+  - 10 to 200 employees (Focusing on investment team size and analysts)
 
 technographics:
+  - Affinity (CRM)
   - Salesforce
-  - HubSpot
+  - Hubspot
+  - Dealroom / Crunchbase Enterprise
+  - Slack / Microsoft Teams (for agent notifications)
+  - Google Workspace (for Drive/Gmail integration)
 
 buying_triggers:
-  - Recent funding round in the last 6 months
-  - Newly hired VP of Sales or VP of Marketing
-  - Geographic expansion
+  - New Fund Launch (e.g., "raised Fund II/III")
+  - High volume of inbound pitch decks (publicly seeking applications)
+  - Hiring for 'Investment Analyst' or 'Associate' roles
+  - Recent expansion into new markets (requiring multi-market KYC/due diligence)
+  - Public complaints or discussions regarding "deal flow fatigue" or "due diligence backlog"

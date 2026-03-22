@@ -10,6 +10,7 @@ class ResearchCrew():
     def people_mapper(self) -> Agent:
         return Agent(
             config=self.agents_config['people_mapper'],
+            tools=[SerperDevTool(), ScrapeWebsiteTool()],
             verbose=True
         )
 

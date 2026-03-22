@@ -1,7 +1,9 @@
 buying_committee_mapping_task:
   description: >
     Conduct a deep dive into the corporate structure of {company_name} to find the probable individuals leading their initiatives. 
-    Specifically, locate:
+    You MUST actively search their LinkedIn, Tracxn, and company website using your tools to find the ACTUAL NAMES of the individuals holding these positions. Do NOT return generic placeholders like "[COO Name]".
+    
+    Specifically, locate the names of the people filling these roles:
     - The Economic Buyer (e.g., CRO, CFO, or VP of Sales/Marketing).
     - The Champion (e.g., Director or Manager level, who will handle the day-to-day implementation).
     - An Influencer (e.g., end-user or operational role, whose opinion matters).

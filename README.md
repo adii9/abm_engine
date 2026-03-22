@@ -8,8 +8,10 @@ This project orchestrates a multi-stage AI workflow (Flow) that completely autom
 
 The engine resolves a robust State Management pattern via Pydantic mapping across **Three specialized Crews**:
 
-1. **Qualification Crew**: Evaluates your chosen Account against your strict Ideal Customer Profile (ICP). If the profile is rejected, the flow halts to save time and API costs.
-2. **Research Crew**: Executes sequentially to map the Buying Committee (Economic Buyer, Champion, Influencer) and utilizes `SerperDevTool` to harvest a non-obvious trigger event from the last 90 days.
+1. **Qualification Crew**: Evaluates your chosen Account against your strict Ideal Customer Profile (ICP). The **Account Scout** is equipped with `SerperDevTool` and `ScrapeWebsiteTool` to actively search Google, Tracxn, and LinkedIn to validate firmographics (e.g., recent funding rounds, team sizes) before making a decision. If the profile is rejected, the flow halts to save time and API costs.
+2. **Research Crew**: Executes sequentially to map the Buying Committee and harvest signals. 
+   - The **People Mapper** actively searches LinkedIn and Tracxn to retrieve the *actual names* of the decision-makers (Economic Buyer, Champion, Influencer) rather than hallucinating theoretical job titles.
+   - The **Intel Analyst** uses the same tools to harvest a highly specific, non-obvious trigger event from the last 90 days.
 3. **Content Crew**: Synthesizes the decision-makers and trigger events to output an Engagement Plan, a Value Gift, and an Outreach Email (strictly restricted to <100 words dynamically via a Function-Based Guardrail).
 
 ## 🚀 Installation & Setup

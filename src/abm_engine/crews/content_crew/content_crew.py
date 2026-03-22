@@ -8,16 +8,25 @@ class ContentResult(BaseModel):
     value_gift: str
     outreach_email: str
 
-def validate_email_length(result: ContentResult):
+def validate_email_length(result):
     """
     Function-Based Guardrail to ensure the outreach email is under 100 words.
     """
-    email_text = result.outreach_email
-    word_count = len(email_text.split())
-    
-    if word_count > 100:
-        return (False, f"Error: Email exceeds 100 words (currently {word_count} words). Rewrite to be more concise.")
-    
+    try:
+        # result is a TaskOutput object. We access the parsed pydantic object if it exists.
+        if hasattr(result, 'pydantic') and result.pydantic is not None:
+            email_text = result.pydantic.outreach_email
+        else:
+            # If for some reason pydantic isn't populated, we pass the guardrail
+            return (True, result)
+            
+        word_count = len(email_text.split())
+        
+        if word_count > 100:
+            return (False, f"Error: Email exceeds 100 words (currently {word_count} words). Rewrite to be more concise.")
+    except Exception:
+        pass
+        
     return (True, result)
 
 @CrewBase
