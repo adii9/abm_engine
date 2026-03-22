@@ -1,0 +1,18 @@
+# Define your Ideal Customer Profile (ICP) Criteria here.
+# The Qualification Crew will read this file and use it to determine if an account is a fit.
+
+target_industries:
+  - B2B Software as a Service (SaaS)
+  - Technology Consulting
+
+company_size:
+  - 50 to 500 employees
+
+technographics:
+  - Salesforce
+  - HubSpot
+
+buying_triggers:
+  - Recent funding round in the last 6 months
+  - Newly hired VP of Sales or VP of Marketing
+  - Geographic expansion

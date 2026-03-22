@@ -1,0 +1,21 @@
+buying_committee_mapping_task:
+  description: >
+    Conduct a deep dive into the corporate structure of {company_name} to find the probable individuals leading their initiatives. 
+    Specifically, locate:
+    - The Economic Buyer (e.g., CRO, CFO, or VP of Sales/Marketing).
+    - The Champion (e.g., Director or Manager level, who will handle the day-to-day implementation).
+    - An Influencer (e.g., end-user or operational role, whose opinion matters).
+  expected_output: >
+    A list of at least 3 distinct roles/profiles corresponding to the Economic Buyer, Champion, and Influencer. Include the probable title (or specific name if known), and a brief sentence explaining why they fit this role.
+  agent: people_mapper
+
+signal_harvesting_task:
+  description: >
+    Based on the individuals identified for {company_name}, research the company's activity over the last 90 days.
+    Find a non-obvious trigger event that would be a compelling reason to reach out to them *now*.
+    Look for things like new strategic directives, key leadership transitions, specific technological hurdles, or recent market expansions.
+  expected_output: >
+    A concise paragraph describing the most compelling trigger event from the last 90 days, explaining why it indicates an immediate need for external solutions or improvements.
+  agent: intel_analyst
+  context:
+    - buying_committee_mapping_task

@@ -1,0 +1,22 @@
+[project]
+name = "abm_engine"
+version = "0.1.0"
+description = "abm_engine using crewAI"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "crewai[google-genai,tools]==1.8.1",
+]
+
+[project.scripts]
+kickoff = "abm_engine.main:kickoff"
+run_crew = "abm_engine.main:kickoff"
+plot = "abm_engine.main:plot"
+run_with_trigger = "abm_engine.main:run_with_trigger"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "flow"

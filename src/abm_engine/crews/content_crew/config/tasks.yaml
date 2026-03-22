@@ -1,0 +1,13 @@
+content_generation_task:
+  description: >
+    Using the buying committee structure and the specific 90-day trigger event identified for {company_name}:
+    1. Draft a quick internal Engagement Plan.
+    2. Suggest a 'Value Gift' (e.g., an insight, relevant template, or quick-win observation).
+    3. Write the actual Outreach Email to the Economic Buyer or Champion.
+
+    Trigger Event Context: {trigger_event}
+    Buying Committee Context: {buying_committee}
+  expected_output: >
+    The Engagement Plan, the Value Gift, and the Outreach Email.
+    The Outreach Email MUST be strictly under 100 words.
+  agent: strategic_copywriter

@@ -1,0 +1,11 @@
+account_selection_task:
+  description: >
+    Evaluate the company {company_name} against our strict Ideal Customer Profile (ICP) criteria. 
+    
+    ICP Criteria:
+    {icp_criteria}
+    
+    Determine if they meet these exact criteria or if they show signs of recent funding, expansion, or a clear "Why Now" trigger based on the information available. 
+  expected_output: >
+    A Boolean value indicating whether the company is an ICP fit (`icp_fit`) and a string explaining the reasoning (`reason`).
+  agent: account_scout
