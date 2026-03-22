@@ -2,6 +2,7 @@
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 from crewai.flow.flow import Flow, listen, router, start
+from crewai.flow.persistence import persist
 from .crews.qualification_crew.qualification_crew import QualificationCrew
 from .crews.research_crew.research_crew import ResearchCrew
 from .crews.content_crew.content_crew import ContentCrew
@@ -14,6 +15,7 @@ class ABMState(BaseModel):
     trigger_event: str = ""
     final_content: dict = {}
 
+@persist()
 class ABMEngineFlow(Flow[ABMState]):
     
     @start()

@@ -14,6 +14,9 @@ The engine resolves a robust State Management pattern via Pydantic mapping acros
    - The **Intel Analyst** uses the same tools to harvest a highly specific, non-obvious trigger event from the last 90 days.
 3. **Content Crew**: Synthesizes the decision-makers and trigger events to output an Engagement Plan, a Value Gift, and an Outreach Email (strictly restricted to <100 words dynamically via a Function-Based Guardrail).
 
+### 💾 State Persistence
+The workflow state is automatically persisted locally between executions using CrewAI's `@persist()` SQLite framework. You can inspect previous logic traces and generated outputs by exploring the generated database at: `~/Library/Application Support/abm_engine/flow_states.db` (on macOS).
+
 ## 🚀 Installation & Setup
 
 Ensure you have Python `>=3.11` installed to support ONNX runtime evaluation. This project uses [UV](https://docs.astral.sh/uv/) for dependency management.
