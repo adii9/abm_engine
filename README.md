@@ -1,56 +1,65 @@
-# {{crew_name}} Crew
+# Agentic ABM Engine
 
-Welcome to the {{crew_name}} Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Welcome to the **Agentic ABM Engine**, powered by [crewAI](https://crewai.com). 
 
-## Installation
+This project orchestrates a multi-stage AI workflow (Flow) that completely automates Account-Based Marketing (ABM) outreach. Instead of generic spam, this engine qualifies target accounts, maps their buying committees, harvests real-time "Why Now?" trigger events, and drafts dangerously relevant, hyper-personalized outreach.
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+## 🧠 How It Works
 
-First, if you haven't already, install uv:
+The engine resolves a robust State Management pattern via Pydantic mapping across **Three specialized Crews**:
 
+1. **Qualification Crew**: Evaluates your chosen Account against your strict Ideal Customer Profile (ICP). If the profile is rejected, the flow halts to save time and API costs.
+2. **Research Crew**: Executes sequentially to map the Buying Committee (Economic Buyer, Champion, Influencer) and utilizes `SerperDevTool` to harvest a non-obvious trigger event from the last 90 days.
+3. **Content Crew**: Synthesizes the decision-makers and trigger events to output an Engagement Plan, a Value Gift, and an Outreach Email (strictly restricted to <100 words dynamically via a Function-Based Guardrail).
+
+## 🚀 Installation & Setup
+
+Ensure you have Python `>=3.11` installed to support ONNX runtime evaluation. This project uses [UV](https://docs.astral.sh/uv/) for dependency management.
+
+1. Install uv (if you haven't already):
 ```bash
 pip install uv
 ```
 
-Next, navigate to your project directory and install the dependencies:
-
-(Optional) Lock the dependencies and install them by using the CLI command:
+2. Lock and install the project dependencies:
 ```bash
-crewai install
+uv sync   # Or `crewai install`
 ```
 
-### Customizing
+### Configuration
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+**1. Secret API Keys**
+Create a `.env` file at the root of the project and add your API credentials. The engine is natively configured to support Gemini out of the box (with `crewai[google-genai]` installed).
 
-- Modify `src/abm_engine/config/agents.yaml` to define your agents
-- Modify `src/abm_engine/config/tasks.yaml` to define your tasks
-- Modify `src/abm_engine/crew.py` to add your own logic, tools and specific args
-- Modify `src/abm_engine/main.py` to add custom inputs for your agents and tasks
+```env
+GEMINI_API_KEY=your_gemini_api_key
+# OR
+OPENAI_API_KEY=your_openai_api_key
 
-## Running the Project
-
-To kickstart your flow and begin execution, run this from the root folder of your project:
-
-```bash
-crewai run
+# Required for the Research Crew's Intel Analyst
+SERPER_API_KEY=your_serper_api_key
 ```
 
-This command initializes the abm_engine Flow as defined in your configuration.
+**2. Define Your Ideal Customer Profile (ICP)**
+Modify the `icp.yaml` file located at the root of the project to inject your exact target criteria. The Qualification Crew uses this YAML structure dynamically to reject unqualified accounts.
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+## ⚡ Running the Engine
 
-## Understanding Your Crew
+To kickstart the entire flow manually, run this from the root directory:
 
-The abm_engine Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+```bash
+crewai flow kickoff
+# Or via UV
+uv run kickoff
+```
 
-## Support
+To visualize the sequential execution and routing of your flow, use the CrewAI plot tool:
+```bash
+crewai flow plot
+```
 
-For support, questions, or feedback regarding the {{crew_name}} Crew or crewAI.
+## 🛠️ Customizing the Crews
 
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
-
-Let's create wonders together with the power and simplicity of crewAI.
+- **Qualification**: Adjust the "Ruthless Sales Leader" backstory in `src/abm_engine/crews/qualification_crew/config/agents.yaml`.
+- **Research**: Augment mapping or scraping tools in `src/abm_engine/crews/research_crew/research_crew.py`.
+- **Content**: Tweak the email length or tone in the custom `validate_email_length` guardrail inside `src/abm_engine/crews/content_crew/content_crew.py`.
