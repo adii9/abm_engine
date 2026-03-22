@@ -14,9 +14,29 @@ class ABMState(BaseModel):
     buying_committee: dict = {}
     trigger_event: str = ""
     final_content: dict = {}
+    usage_metrics: dict = {
+        "total_tokens": 0,
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "successful_requests": 0
+    }
 
 @persist()
 class ABMEngineFlow(Flow[ABMState]):
+    
+    def _aggregate_tokens(self, result):
+        if hasattr(result, 'token_usage') and result.token_usage:
+            usage = result.token_usage
+            if isinstance(usage, dict):
+                self.state.usage_metrics["total_tokens"] += usage.get("total_tokens", 0)
+                self.state.usage_metrics["prompt_tokens"] += usage.get("prompt_tokens", 0)
+                self.state.usage_metrics["completion_tokens"] += usage.get("completion_tokens", 0)
+                self.state.usage_metrics["successful_requests"] += usage.get("successful_requests", 0)
+            else:
+                self.state.usage_metrics["total_tokens"] += getattr(usage, "total_tokens", 0)
+                self.state.usage_metrics["prompt_tokens"] += getattr(usage, "prompt_tokens", 0)
+                self.state.usage_metrics["completion_tokens"] += getattr(usage, "completion_tokens", 0)
+                self.state.usage_metrics["successful_requests"] += getattr(usage, "successful_requests", 0)
     
     @start()
     def qualify_account(self):
@@ -40,6 +60,7 @@ class ABMEngineFlow(Flow[ABMState]):
                 "icp_criteria": icp_criteria
             }
         )
+        self._aggregate_tokens(result)
         
         # Determine ICP fit securely
         if result.pydantic:
@@ -70,6 +91,8 @@ class ABMEngineFlow(Flow[ABMState]):
     def research_account(self):
         print("Executing Research Phase...")
         result = ResearchCrew().crew().kickoff(inputs={"company_name": self.state.company_name})
+        self._aggregate_tokens(result)
+
         # Extract results directly from task outputs since ResearchCrew handles multiple tasks
         self.state.buying_committee = getattr(result.tasks_output[0], 'pydantic', {}).dict() if hasattr(result.tasks_output[0], 'pydantic') and result.tasks_output[0].pydantic else {"summary": result.tasks_output[0].raw}
         self.state.trigger_event = result.tasks_output[1].raw
@@ -84,6 +107,7 @@ class ABMEngineFlow(Flow[ABMState]):
             "trigger_event": self.state.trigger_event
         }
         result = ContentCrew().crew().kickoff(inputs=inputs)
+        self._aggregate_tokens(result)
         
         if result.pydantic:
             self.state.final_content = {
@@ -100,6 +124,7 @@ class ABMEngineFlow(Flow[ABMState]):
                 self.state.final_content = json.loads(cleaned)
             except Exception:
                 self.state.final_content = {"raw_output": result.raw}
+                
         print("ABM Flow Complete!")
         return self.state.final_content
 
@@ -110,10 +135,32 @@ class ABMEngineFlow(Flow[ABMState]):
 
 
 def kickoff():
-    abm_flow = ABMEngineFlow()
-    abm_flow.state.company_name = "AWE FUNDS" # Default test input, would normally be passed in
-    result = abm_flow.kickoff()
-    print("Final State:", abm_flow.state.model_dump())
+    import sys
+    
+    # Read companies from command line args if provided, otherwise default to a single company
+    if len(sys.argv) > 1:
+        companies = sys.argv[1:]
+    else:
+        companies = ["AWE FUNDS"]
+        
+    print(f"\n🚀 Booting ABM Engine for {len(companies)} companies: {', '.join(companies)}\n" + "="*50)
+    
+    results = []
+    for company in companies:
+        print(f"\n🔍 Processing Account: {company}...")
+        try:
+            abm_flow = ABMEngineFlow()
+            # Resetting state properly by creating a new flow instance
+            abm_flow.state.company_name = company
+            abm_flow.kickoff()
+            final_state = abm_flow.state.model_dump()
+            print(f"\n✅ Final State for {company}:", final_state)
+            results.append(final_state)
+        except Exception as e:
+            print(f"\n❌ Error processing {company}: {str(e)}")
+            
+    print("\n" + "="*50 + "\n🏁 All Accounts Processed!")
+    return results
 
 def plot():
     abm_flow = ABMEngineFlow()

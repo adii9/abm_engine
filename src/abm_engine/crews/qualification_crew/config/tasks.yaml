@@ -7,7 +7,7 @@ account_selection_task:
     ICP Criteria:
     {icp_criteria}
     
-    Determine if they meet these exact criteria or if they show signs of recent funding, expansion, or a clear "Why Now" trigger based on the information available. 
+    CRITICAL INSTRUCTION: You MUST strictly evaluate if the company matches the 'target_industries' and 'company_size'. If the company does not fall into one of the exact target industries (like VC, PE, Family Offices), you MUST reject them by setting `icp_fit` to false, regardless of how large or expanding they are. Do not approve software giants like Google or Apple unless they are explicitly venture capital firms.
   expected_output: >
     A Boolean value indicating whether the company is an ICP fit (`icp_fit`) and a string explaining the reasoning (`reason`).
   agent: account_scout
